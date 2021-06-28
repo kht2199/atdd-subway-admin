@@ -6,11 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
 
 import io.restassured.RestAssured;
 import nextstep.subway.line.dto.LineRequest;
 import nextstep.subway.line.dto.LineResponse;
+import nextstep.subway.section.domain.SectionRequest;
+import nextstep.subway.section.domain.SectionResponse;
 import nextstep.subway.station.dto.StationRequest;
 import nextstep.subway.station.dto.StationResponse;
 import nextstep.subway.utils.DatabaseCleanup;
@@ -51,5 +52,17 @@ public class AcceptanceTest {
             .then()
             .statusCode(HttpStatus.CREATED.value())
             .extract().body().as(StationResponse.class);
+    }
+
+    protected SectionResponse postSection(LineResponse line, SectionRequest request) {
+        return RestAssured.given()
+            .body(request)
+            .pathParam("id", line.getId())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+            .post("/lines/{id}/sections")
+            .then()
+            .statusCode(HttpStatus.CREATED.value())
+            .extract().body().as(SectionResponse.class);
     }
 }

@@ -18,6 +18,8 @@ import nextstep.subway.line.domain.LineNameDuplicatedException;
 import nextstep.subway.line.domain.LineNotFoundException;
 import nextstep.subway.line.dto.LineRequest;
 import nextstep.subway.line.dto.LineResponse;
+import nextstep.subway.section.domain.SectionRequest;
+import nextstep.subway.section.domain.SectionResponse;
 import nextstep.subway.station.domain.StationExistsAlreadyException;
 import nextstep.subway.station.domain.StationNotFoundException;
 
@@ -56,5 +58,15 @@ public class LineController {
     public ResponseEntity<LineResponse> deleteLineById(@PathVariable Long id) throws LineNotFoundException {
         lineService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/sections")
+    public ResponseEntity<SectionResponse> addSection(@PathVariable Long id, @RequestBody SectionRequest sectionRequest) throws
+            LineNotFoundException, StationNotFoundException {
+        SectionResponse section = lineService.addSection(id, sectionRequest);
+        String uri = String.format("/lines/%d/sections/%d", id, section.getId());
+        return ResponseEntity
+            .created(URI.create(uri))
+            .body(section);
     }
 }
