@@ -66,7 +66,7 @@ public class AcceptanceTest {
             .extract().body().as(SectionResponse.class);
     }
 
-    protected LineResponse getLine(String lineId) {
+    protected LineResponse getLine(Long lineId) {
         return RestAssured.given()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .pathParam("id", lineId)

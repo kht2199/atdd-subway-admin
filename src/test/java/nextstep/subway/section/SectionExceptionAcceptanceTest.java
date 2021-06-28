@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import nextstep.subway.AcceptanceTest;
 import nextstep.subway.line.dto.LineRequest;
 import nextstep.subway.line.dto.LineResponse;
-import nextstep.subway.section.domain.SectionRequest;
-import nextstep.subway.section.domain.SectionResponse;
+import nextstep.subway.section.dto.SectionRequest;
+import nextstep.subway.section.dto.SectionResponse;
 import nextstep.subway.station.dto.StationRequest;
 import nextstep.subway.station.dto.StationResponse;
 
@@ -48,7 +48,7 @@ public class SectionExceptionAcceptanceTest extends AcceptanceTest {
 
 		// when
 		// 지하철_노선에_지하철역_등록_요청
-		SectionResponse 신규_섹션 = postSection(신분당선, new SectionRequest(강남역.getId(), B역.getId(), distance));
+		SectionResponse newSection = postSection(신분당선, new SectionRequest(강남역.getId(), B역.getId(), distance));
 
 		// then
 		// 지하철_노선에_지하철역_등록됨
