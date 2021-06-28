@@ -10,8 +10,8 @@ import org.springframework.http.MediaType;
 import io.restassured.RestAssured;
 import nextstep.subway.line.dto.LineRequest;
 import nextstep.subway.line.dto.LineResponse;
-import nextstep.subway.section.domain.SectionRequest;
-import nextstep.subway.section.domain.SectionResponse;
+import nextstep.subway.section.dto.SectionRequest;
+import nextstep.subway.section.dto.SectionResponse;
 import nextstep.subway.station.dto.StationRequest;
 import nextstep.subway.station.dto.StationResponse;
 import nextstep.subway.utils.DatabaseCleanup;
@@ -64,5 +64,18 @@ public class AcceptanceTest {
             .then()
             .statusCode(HttpStatus.CREATED.value())
             .extract().body().as(SectionResponse.class);
+    }
+
+    protected LineResponse getLine(String lineId) {
+        return RestAssured.given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .pathParam("id", lineId)
+            .when()
+            .get("/lines/{id}")
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .extract()
+            .body().as(LineResponse.class)
+        ;
     }
 }
