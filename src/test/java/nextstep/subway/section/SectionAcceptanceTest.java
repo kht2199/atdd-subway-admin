@@ -1,5 +1,7 @@
 package nextstep.subway.section;
 
+import static org.assertj.core.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import nextstep.subway.AcceptanceTest;
 import nextstep.subway.line.dto.LineRequest;
 import nextstep.subway.line.dto.LineResponse;
-import nextstep.subway.section.domain.SectionRequest;
-import nextstep.subway.section.domain.SectionResponse;
+import nextstep.subway.section.dto.SectionRequest;
+import nextstep.subway.section.dto.SectionResponse;
 import nextstep.subway.station.dto.StationRequest;
 import nextstep.subway.station.dto.StationResponse;
 
@@ -48,11 +50,28 @@ public class SectionAcceptanceTest extends AcceptanceTest {
 
 		// when
 		// 지하철_노선에_지하철역_등록_요청
-		SectionResponse 신규_섹션 = postSection(신분당선, new SectionRequest(강남역.getId(), B역.getId(), distance));
+		SectionResponse newSection = postSection(신분당선, new SectionRequest(강남역.getId(), B역.getId(), distance));
 
 		// then
 		// 지하철_노선에_지하철역_등록됨
-		assert false;
+		assertThat(newSection)
+			.matches(section -> section.getUpStation().getName().equals(강남역.getName()))
+			.matches(section -> section.getDownStation().getName().equals(B역.getName()))
+			.matches(section -> section.getDistance() == distance)
+		;
+
+		// when
+		// 지하철 노선 조회시,
+		LineResponse line = getLine(신분당선.getId());
+
+		// then
+		// 섹션 검증
+		assertThat(line.getSections())
+			.extracting(s -> s.getUpStation().getName(), s -> s.getDownStation().getName(), SectionResponse::getDistance)
+			.containsExactly(
+				tuple(강남역.getName(), B역.getName(), 4),
+				tuple(B역.getName(), 광교역.getName(), 3)
+			);
 	}
 
 	@DisplayName("새로운 역을 상행 종점으로 등록할 경우. (B)--4--강남역--7--광교역")
@@ -64,11 +83,28 @@ public class SectionAcceptanceTest extends AcceptanceTest {
 
 		// when
 		// 지하철_노선에_지하철역_등록_요청
-		SectionResponse 신규_섹션 = postSection(신분당선, new SectionRequest(B역.getId(), 강남역.getId(), distance));
+		SectionResponse newSection = postSection(신분당선, new SectionRequest(B역.getId(), 강남역.getId(), distance));
 
 		// then
 		// 지하철_노선에_지하철역_등록됨
-		assert false;
+		assertThat(newSection)
+			.matches(section -> section.getUpStation().getName().equals(B역.getName()))
+			.matches(section -> section.getDownStation().getName().equals(강남역.getName()))
+			.matches(section -> section.getDistance() == distance)
+		;
+
+		// when
+		// 지하철 노선 조회시,
+		LineResponse line = getLine(신분당선.getId());
+
+		// then
+		// 섹션 검증
+		assertThat(line.getSections())
+			.extracting(s -> s.getUpStation().getName(), s -> s.getDownStation().getName(), SectionResponse::getDistance)
+			.containsExactly(
+				tuple(B역.getName(), 강남역.getName(), 4),
+				tuple(강남역.getName(), 광교역.getName(), 7)
+			);
 	}
 
 	@DisplayName("새로운 역을 하행 종점으로 등록할 경우. 강남역--7--광교역--3--(B)")
@@ -80,11 +116,28 @@ public class SectionAcceptanceTest extends AcceptanceTest {
 
 		// when
 		// 지하철_노선에_지하철역_등록_요청
-		SectionResponse 신규_섹션 = postSection(신분당선, new SectionRequest(광교역.getId(), B역.getId(), distance));
+		SectionResponse newSection = postSection(신분당선, new SectionRequest(광교역.getId(), B역.getId(), distance));
 
 		// then
 		// 지하철_노선에_지하철역_등록됨
-		assert false;
+		assertThat(newSection)
+			.matches(section -> section.getUpStation().getName().equals(광교역.getName()))
+			.matches(section -> section.getDownStation().getName().equals(B역.getName()))
+			.matches(section -> section.getDistance() == distance)
+		;
+
+		// when
+		// 지하철 노선 조회시,
+		LineResponse line = getLine(신분당선.getId());
+
+		// then
+		// 섹션 검증
+		assertThat(line.getSections())
+			.extracting(s -> s.getUpStation().getName(), s -> s.getDownStation().getName(), SectionResponse::getDistance)
+			.containsExactly(
+				tuple(강남역.getName(), 광교역.getName(), 7),
+				tuple(광교역.getName(), B역.getName(), 3)
+			);
 	}
 
 }
