@@ -1,6 +1,7 @@
-package nextstep.subway.section.domain;
+package nextstep.subway.section.dto;
 
 import nextstep.subway.line.dto.LineResponse;
+import nextstep.subway.section.domain.Section;
 import nextstep.subway.station.dto.StationResponse;
 
 public class SectionResponse {
@@ -18,7 +19,7 @@ public class SectionResponse {
 	protected SectionResponse() {
 	}
 
-	private SectionResponse(Section section) {
+	public SectionResponse(Section section) {
 		this.id = section.getId();
 		this.distance = section.getDistance();
 		this.line = LineResponse.of(section.getLine());

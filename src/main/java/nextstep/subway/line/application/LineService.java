@@ -14,10 +14,8 @@ import nextstep.subway.line.domain.LineRepository;
 import nextstep.subway.line.dto.LineRequest;
 import nextstep.subway.line.dto.LineResponse;
 import nextstep.subway.section.domain.Section;
-import nextstep.subway.section.domain.SectionDistanceNotEnoughException;
-import nextstep.subway.section.domain.SectionNotFoundContainsStationException;
-import nextstep.subway.section.domain.SectionRequest;
-import nextstep.subway.section.domain.SectionResponse;
+import nextstep.subway.section.dto.SectionRequest;
+import nextstep.subway.section.dto.SectionResponse;
 import nextstep.subway.station.application.StationService;
 import nextstep.subway.station.domain.Station;
 import nextstep.subway.station.domain.StationNotFoundException;
@@ -71,16 +69,17 @@ public class LineService {
 
     public SectionResponse addSection(Long id, SectionRequest sectionRequest) throws
             LineNotFoundException,
-            StationNotFoundException, SectionNotFoundContainsStationException, SectionDistanceNotEnoughException {
+            StationNotFoundException {
         Line line = lineRepository.findById(id)
             .orElseThrow(LineNotFoundException::new);
-        Section section = line.addStations(
+        Section newSection = new Section(
+            line,
             stationService.getById(sectionRequest.getUpStationId()),
             stationService.getById(sectionRequest.getDownStationId()),
             sectionRequest.getDistance()
         );
-
-        return SectionResponse.of(section);
+        line.addSection(newSection);
+        return SectionResponse.of(newSection);
     }
 
     private void checkNameDuplication(String name) throws LineNameDuplicatedException {

@@ -40,14 +40,6 @@ public class Section extends BaseEntity {
 		this.distance = distance;
 	}
 
-	public Line getLine() {
-		return line;
-	}
-
-	public boolean contains(Station station) {
-		return station == upStation || downStation == station;
-	}
-
 	public Station[] stations() {
 		return new Station[]{
 			upStation, downStation
@@ -60,7 +52,7 @@ public class Section extends BaseEntity {
 	 *
 	 * @param stations 직렬화 하기 위한 List 인스턴스.
 	 */
-	public void appendStations(List<Station> stations) {
+	public void addStationsTo(List<Station> stations) {
 		if (stations.size() == 0) {
 			stations.add(upStation);
 		}
@@ -69,6 +61,10 @@ public class Section extends BaseEntity {
 
 	public Long getId() {
 		return id;
+	}
+
+	public Line getLine() {
+		return line;
 	}
 
 	public int getDistance() {
@@ -81,5 +77,16 @@ public class Section extends BaseEntity {
 
 	public Station getDownStation() {
 		return downStation;
+	}
+
+	@Override
+	public String toString() {
+		return "Section{" +
+			"id=" + id +
+			", distance=" + distance +
+			", line=" + line +
+			", upStation=" + upStation +
+			", downStation=" + downStation +
+			'}';
 	}
 }

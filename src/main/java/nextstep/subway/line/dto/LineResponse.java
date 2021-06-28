@@ -1,13 +1,13 @@
 package nextstep.subway.line.dto;
 
-import nextstep.subway.line.domain.Line;
-import nextstep.subway.section.domain.SectionResponse;
-import nextstep.subway.station.domain.Station;
-import nextstep.subway.station.dto.StationResponse;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import nextstep.subway.line.domain.Line;
+import nextstep.subway.section.domain.Sections;
+import nextstep.subway.section.dto.SectionResponse;
+import nextstep.subway.station.dto.StationResponse;
 
 public class LineResponse {
     private Long id;
@@ -25,10 +25,11 @@ public class LineResponse {
         this.id = line.getId();
         this.name = line.getName();
         this.color = line.getColor();
-        this.stations = line.stations().stream()
+        Sections sections = line.sections();
+        this.stations = sections.stations().getStations().stream()
             .map(StationResponse::of)
             .collect(Collectors.toList());
-        this.sections = line.sections().stream()
+        this.sections = sections.getSections().stream()
             .map(SectionResponse::new)
             .collect(Collectors.toList());
         this.createdDate = line.getCreatedDate();

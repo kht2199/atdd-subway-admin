@@ -18,10 +18,8 @@ import nextstep.subway.line.domain.LineNameDuplicatedException;
 import nextstep.subway.line.domain.LineNotFoundException;
 import nextstep.subway.line.dto.LineRequest;
 import nextstep.subway.line.dto.LineResponse;
-import nextstep.subway.section.domain.SectionDistanceNotEnoughException;
-import nextstep.subway.section.domain.SectionNotFoundContainsStationException;
-import nextstep.subway.section.domain.SectionRequest;
-import nextstep.subway.section.domain.SectionResponse;
+import nextstep.subway.section.dto.SectionRequest;
+import nextstep.subway.section.dto.SectionResponse;
 import nextstep.subway.station.domain.StationNotFoundException;
 
 @RestController
@@ -65,9 +63,7 @@ public class LineController {
     @PostMapping("/{id}/sections")
     public ResponseEntity<SectionResponse> addSection(@PathVariable Long id, @RequestBody SectionRequest sectionRequest) throws
             LineNotFoundException,
-            StationNotFoundException,
-            SectionNotFoundContainsStationException,
-            SectionDistanceNotEnoughException {
+            StationNotFoundException {
         SectionResponse section = lineService.addSection(id, sectionRequest);
         String uri = String.format("/lines/%d/sections/%d", id, section.getId());
         return ResponseEntity
