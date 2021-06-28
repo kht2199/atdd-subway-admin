@@ -11,6 +11,8 @@ import javax.persistence.Id;
 
 import nextstep.subway.common.BaseEntity;
 import nextstep.subway.section.domain.Section;
+import nextstep.subway.section.domain.SectionDistanceNotEnoughException;
+import nextstep.subway.section.domain.SectionNotFoundContainsStationException;
 import nextstep.subway.section.domain.Sections;
 import nextstep.subway.station.domain.Station;
 
@@ -27,18 +29,19 @@ public class Line extends BaseEntity {
     private String color;
 
     @Embedded
-    private final Sections sections = new Sections();
+    private Sections sections;
 
     protected Line() {}
 
-    public Line(String name, String color) {
+    public Line(Station upStation, Station downStation, int distance, String name, String color) {
         this.name = name;
         this.color = color;
+        this.sections = new Sections(this, upStation, downStation, distance);
     }
 
-    public void update(Line line) {
-        this.name = line.getName();
-        this.color = line.getColor();
+    public void update(String name, String color) {
+        this.name = name;
+        this.color = color;
     }
 
     public Long getId() {
@@ -53,11 +56,17 @@ public class Line extends BaseEntity {
         return color;
     }
 
-    public Section addStations(Station upStation, Station downStation, int distance) {
-        return this.sections.add(this, upStation, downStation, distance);
+    public Section addStations(Station upStation, Station downStation, int distance) throws
+            SectionNotFoundContainsStationException, SectionDistanceNotEnoughException {
+        Section newSection = new Section(this, upStation, downStation, distance);
+        return this.sections.add(newSection);
     }
 
     public List<Station> stations() {
         return sections.serializeStations();
+    }
+
+    public List<Section> sections() {
+        return sections.sections();
     }
 }

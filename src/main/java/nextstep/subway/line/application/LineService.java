@@ -14,6 +14,8 @@ import nextstep.subway.line.domain.LineRepository;
 import nextstep.subway.line.dto.LineRequest;
 import nextstep.subway.line.dto.LineResponse;
 import nextstep.subway.section.domain.Section;
+import nextstep.subway.section.domain.SectionDistanceNotEnoughException;
+import nextstep.subway.section.domain.SectionNotFoundContainsStationException;
 import nextstep.subway.section.domain.SectionRequest;
 import nextstep.subway.section.domain.SectionResponse;
 import nextstep.subway.station.application.StationService;
@@ -36,11 +38,9 @@ public class LineService {
             LineNameDuplicatedException,
             StationNotFoundException {
         checkNameDuplication(request.getName());
-        int distance = request.getDistance();
         Station upStation = stationService.getById(request.getUpStationId());
         Station downStation = stationService.getById(request.getDownStationId());
-        Line line = request.toLine();
-        line.addStations(upStation, downStation, distance);
+        Line line = request.toLine(upStation, downStation);
         return LineResponse.of(lineRepository.save(line));
     }
 
@@ -59,7 +59,7 @@ public class LineService {
     public LineResponse updateById(Long id, LineRequest request) throws LineNotFoundException {
         Line line = lineRepository.findById(id)
             .orElseThrow(LineNotFoundException::new);
-        line.update(request.toLine());
+        line.update(request.getName(), request.getColor());
         return LineResponse.of(line);
     }
 
@@ -70,15 +70,16 @@ public class LineService {
     }
 
     public SectionResponse addSection(Long id, SectionRequest sectionRequest) throws
-        LineNotFoundException,
-        StationNotFoundException {
+            LineNotFoundException,
+            StationNotFoundException, SectionNotFoundContainsStationException, SectionDistanceNotEnoughException {
         Line line = lineRepository.findById(id)
             .orElseThrow(LineNotFoundException::new);
-        Section section = sectionRequest.toSection(
-            line,
+        Section section = line.addStations(
             stationService.getById(sectionRequest.getUpStationId()),
-            stationService.getById(sectionRequest.getDownStationId())
+            stationService.getById(sectionRequest.getDownStationId()),
+            sectionRequest.getDistance()
         );
+
         return SectionResponse.of(section);
     }
 
